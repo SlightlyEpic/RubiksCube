@@ -108,9 +108,19 @@ class Matrix:
 def FilledList(size=0, fill=None) -> List:
   return [fill]*size
 
+#def listMap(list: List, func: Callable) -> List:
+#  """Applies a function on every element of the list"""
+#  for i in range(len(list)):
+#    list[i] = func(list[i], i)
+#
+#  return list
+
 def listMap(list: List, func: Callable) -> List:
   """Applies a function on every element of the list"""
-  for i in range(len(list)):
-    list[i] = func(list[i], i)
+  out = []
+  i = 0
+  for e in list:
+    out.append(func(e, i))
+    i += 1
 
-  return list
+  return out

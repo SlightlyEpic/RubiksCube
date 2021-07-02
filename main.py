@@ -9,9 +9,14 @@
 import sys
 import tkinter as tk
 import math
+from tkinter.constants import ALL
+from typing import List
+import copy
 
 from modules.matrix import Matrix, listMap
-import modules.helper as helper
+import modules.helper as Helper
+import modules.renderer as Renderer
+from modules.cube import RubiksCube as Cube
 import config
 
 ############################################################
@@ -30,11 +35,21 @@ canvas.pack()
 # Testing stuff out
 ############################################################
 
-offset = 200
+offset = {
+    "x": 0,
+    "y": 0,
+    "z": 0
+}
 
-Ry45 = helper.Ry(math.pi/6)
-Rx45 = helper.Rx(math.pi/6)
+camera_pos = (216,216)
 
+Ry45 = Helper.Ry(math.pi/6)
+Rx45 = Helper.Rx(math.pi/6)
+
+deltaRx = Helper.Rx(0.005)
+deltaRy = Helper.Ry(0.005)
+
+"""
 verts = [(0,0,0), (100,0,0), (0,0,100), (100,0,100),
          (0,100,0), (100,100,0), (0,100,100), (100,100,100)]   # (x,y,z)
 
@@ -47,17 +62,29 @@ edges = [(0,1), (0,2), (3,1), (3,2),
          (4,5), (4,6), (7,5), (7,6),
          (0,4), (1,5), (2,6), (3,7)]
 
-project = lambda vert: (vert.data[0][0], vert.data[1][0])
+while True:
+    for i in range(len(verts)):
+        verts[i] = Matrix.static_multiply(deltaRx, verts[i])
+        #verts[i] = Matrix.static_multiply(deltaRy, verts[i])
+    Renderer.renderEdges(canvas, verts, edges)
+"""
 
-projected = []
+verts = copy.deepcopy(Cube.origin_cubelet["verts"])
+edges = copy.deepcopy(Cube.origin_cubelet["edges"])
+faces = copy.deepcopy(Cube.origin_cubelet["faces"])
 
-for vert in verts:
-    projected.append(project(vert))
+for i in range(len(verts)):
+    verts[i] = (verts[i][0]+offset["x"], verts[i][1]+offset["y"], verts[i][2]+offset["z"])
+    verts[i] = Matrix.static_fromArray(verts[i])               # Convert from List to Matrix
+    verts[i] = Matrix.static_multiply(Ry45, verts[i])          # Rotate all vertices by 45 degrees about Y axis
+    verts[i] = Matrix.static_multiply(Rx45, verts[i])          # Rotate all vertices by 45 degrees about X axis
 
-for edge in edges:
-    v1 = projected[edge[0]]
-    v2 = projected[edge[1]]
-    canvas.create_line(v1[0]+offset, v1[1]+offset, v2[0]+offset, v2[1]+offset, fill="#FFFFFF")
+while True:
+    for i in range(len(verts)):
+        pass
+        verts[i] = Matrix.static_multiply(deltaRx, verts[i])
+        #verts[i] = Matrix.static_multiply(deltaRy, verts[i])
+    Renderer.renderFaces(canvas, verts, faces, camera_pos)
 
 # This makes a cube
 
