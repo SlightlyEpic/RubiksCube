@@ -32,6 +32,22 @@ canvas = tk.Canvas(win, height=config.canvas_height, width=config.canvas_width, 
 canvas.pack()
 
 ############################################################
+# Debug mode stuff
+############################################################
+
+_DEBUG = False
+if("-d" in sys.argv): _DEBUG = True
+
+def showVars():
+    pass
+
+if _DEBUG:
+    def showVarsMain():
+        # Code here
+        pass
+    showVars = showVarsMain
+
+############################################################
 # Testing stuff out
 ############################################################
 
@@ -85,6 +101,8 @@ while True:
         verts[i] = Matrix.static_multiply(deltaRx, verts[i])
         #verts[i] = Matrix.static_multiply(deltaRy, verts[i])
     Renderer.renderFaces(canvas, verts, faces, camera_pos)
+
+    showVars()      # Debug method
 
 # This makes a cube
 
